@@ -2,12 +2,12 @@
 const taskForm = document.getElementById('task-form');
 const tasksList = document.getElementById('tasks');
 
-// Task Array to Store Data
+// Task Array
 let tasks = [];
 
-// Fetch Initial Tasks from a JSON File (Simulated)
+// Fetch Tasks from JSON
 async function fetchTasks() {
-  const response = await fetch('tasks.json'); // Simulated JSON
+  const response = await fetch('tasks.json');
   const data = await response.json();
   tasks = data;
   renderTasks();
@@ -32,17 +32,19 @@ taskForm.addEventListener('submit', (e) => {
 // Render Tasks
 function renderTasks() {
   tasksList.innerHTML = '';
-  
-  tasks.forEach(task => {
+
+  tasks.forEach((task) => {
     const li = document.createElement('li');
+    li.className = 'list-group-item';
     li.innerHTML = `
       <div>
-        <strong>${task.title}</strong> - ${task.date}
+        <h5>${task.title}</h5>
+        <small>Due: ${task.date}</small>
         <p>${task.desc}</p>
       </div>
       <div>
-        <button onclick="editTask(${task.id})">Edit</button>
-        <button onclick="deleteTask(${task.id})">Delete</button>
+        <button class="btn btn-sm btn-warning" onclick="editTask(${task.id})">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteTask(${task.id})">Delete</button>
       </div>
     `;
     tasksList.appendChild(li);
@@ -51,18 +53,18 @@ function renderTasks() {
 
 // Edit Task
 function editTask(id) {
-  const task = tasks.find(t => t.id === id);
+  const task = tasks.find((t) => t.id === id);
   if (task) {
     document.getElementById('task-title').value = task.title;
     document.getElementById('task-desc').value = task.desc;
     document.getElementById('task-date').value = task.date;
-    tasks = tasks.filter(t => t.id !== id); // Remove task temporarily
+    tasks = tasks.filter((t) => t.id !== id);
   }
 }
 
 // Delete Task
 function deleteTask(id) {
-  tasks = tasks.filter(task => task.id !== id);
+  tasks = tasks.filter((task) => task.id !== id);
   renderTasks();
 }
 
