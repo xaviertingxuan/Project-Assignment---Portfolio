@@ -1,76 +1,3 @@
-// // DOM Elements
-// const taskForm = document.getElementById('task-form');
-// const tasksList = document.getElementById('tasks');
-
-// // Task Array to Store Data
-// let tasks = [];
-
-// // Fetch Initial Tasks from a JSON File (Simulated)
-// async function fetchTasks() {
-//   const response = await fetch('tasks.json'); // Simulated JSON
-//   const data = await response.json();
-//   tasks = data;
-//   renderTasks();
-// }
-
-// // Add Task
-// taskForm.addEventListener('submit', (e) => {
-//   e.preventDefault();
-  
-//   const title = document.getElementById('task-title').value.trim();
-//   const desc = document.getElementById('task-desc').value.trim();
-//   const date = document.getElementById('task-date').value;
-  
-//   if (title && desc && date) {
-//     const newTask = { id: Date.now(), title, desc, date };
-//     tasks.push(newTask);
-//     renderTasks();
-//     taskForm.reset();
-//   }
-// });
-
-// // Render Tasks
-// function renderTasks() {
-//   tasksList.innerHTML = '';
-  
-//   tasks.forEach(task => {
-//     const li = document.createElement('li');
-//     li.innerHTML = `
-//       <div>
-//         <strong>${task.title}</strong> - ${task.date}
-//         <p>${task.desc}</p>
-//       </div>
-//       <div>
-//         <button onclick="editTask(${task.id})">Edit</button>
-//         <button onclick="deleteTask(${task.id})">Delete</button>
-//       </div>
-//     `;
-//     tasksList.appendChild(li);
-//   });
-// }
-
-// // Edit Task
-// function editTask(id) {
-//   const task = tasks.find(t => t.id === id);
-//   if (task) {
-//     document.getElementById('task-title').value = task.title;
-//     document.getElementById('task-desc').value = task.desc;
-//     document.getElementById('task-date').value = task.date;
-//     tasks = tasks.filter(t => t.id !== id); // Remove task temporarily
-//   }
-// }
-
-// // Delete Task
-// function deleteTask(id) {
-//   tasks = tasks.filter(task => task.id !== id);
-//   renderTasks();
-// }
-
-// // Initialize App
-// fetchTasks();
-
-
-
 // HTML Element References
 const taskForm = document.getElementById('task-form');
 const tasksList = document.getElementById('tasks');
@@ -81,13 +8,8 @@ const editTaskForm = document.getElementById('edit-task-form');
 const editTaskModal = new bootstrap.Modal(document.getElementById('editTaskModal'));
 
 // Variables
-let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+let tasks = [];
 let editingTaskId = null;
-
-// Save tasks to localStorage
-function saveTasks() {
-  localStorage.setItem('tasks', JSON.stringify(tasks));
-}
 
 // Render tasks
 function renderTasks() {
@@ -141,20 +63,12 @@ function renderTasks() {
   });
 }
 
-// Fetch tasks from task.json and merge with localStorage data
+// Fetch tasks from task.json
 async function fetchTasks() {
   try {
     const response = await fetch('tasks.json');
     if (!response.ok) throw new Error('Failed to load task.json');
-
-    const fetchedTasks = await response.json();
-
-    // Merge tasks, avoiding duplicates based on ID
-    const existingIds = new Set(tasks.map((task) => task.id));
-    const newTasks = fetchedTasks.filter((task) => !existingIds.has(task.id));
-
-    tasks = [...tasks, ...newTasks];
-    saveTasks();
+    tasks = await response.json();
     renderTasks();
   } catch (error) {
     console.error('Error fetching tasks:', error);
@@ -172,13 +86,12 @@ taskForm.addEventListener('submit', (e) => {
   if (title && desc && date) {
     const newTask = { id: Date.now(), title, desc, date, completed: false };
     tasks.push(newTask);
-    saveTasks();
     renderTasks();
     taskForm.reset();
   }
 });
 
-// Show the edit task modal with pre-filled values
+// Show the edit task modal
 function showEditTaskModal(taskId) {
   const task = tasks.find((task) => task.id === taskId);
   if (task) {
@@ -204,7 +117,6 @@ editTaskForm.addEventListener('submit', (e) => {
       task.title = updatedTitle;
       task.desc = updatedDesc;
       task.date = updatedDate;
-      saveTasks();
       renderTasks();
       editTaskModal.hide();
     }
@@ -214,7 +126,6 @@ editTaskForm.addEventListener('submit', (e) => {
 // Delete a task
 function deleteTask(taskId) {
   tasks = tasks.filter((task) => task.id !== taskId);
-  saveTasks();
   renderTasks();
 }
 
@@ -223,18 +134,14 @@ function toggleTaskCompletion(taskId) {
   const task = tasks.find((task) => task.id === taskId);
   if (task) {
     task.completed = !task.completed;
-    saveTasks();
     renderTasks();
   }
 }
 
-// Event listeners for search, sort, and filter
+// Search, Sort, and Filter Events
 searchBar.addEventListener('input', renderTasks);
 sortDropdown.addEventListener('change', renderTasks);
 filterDropdown.addEventListener('change', renderTasks);
 
-// Initialize app
-document.addEventListener('DOMContentLoaded', async () => {
-  await fetchTasks(); // Fetch tasks from task.json
-  renderTasks();      // Render all tasks
-});
+// Initial fetch
+fetchTasks();
