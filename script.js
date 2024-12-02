@@ -1,147 +1,151 @@
-// HTML Element References
-const taskForm = document.getElementById('task-form');
-const tasksList = document.getElementById('tasks');
-const searchBar = document.getElementById('search-bar');
-const sortDropdown = document.getElementById('sort-dropdown');
-const filterDropdown = document.getElementById('filter-dropdown');
-const editTaskForm = document.getElementById('edit-task-form');
-const editTaskModal = new bootstrap.Modal(document.getElementById('editTaskModal'));
-
-// Variables
 let tasks = [];
 let editingTaskId = null;
 
-// Render tasks
+// Fetch tasks from task.json using a GET request
+function fetchTasks() {
+    fetch('tasks.json')
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then((data) => {
+            tasks = data;
+            renderTasks();
+        })
+        .catch((error) => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+}
+
+// Render tasks to the UI
 function renderTasks() {
-  let filteredTasks = tasks;
+    const tasksContainer = document.getElementById('tasks');
+    tasksContainer.innerHTML = '';
 
-  // Search
-  const query = searchBar.value.toLowerCase();
-  filteredTasks = filteredTasks.filter((task) =>
-    task.title.toLowerCase().includes(query) || task.desc.toLowerCase().includes(query)
-  );
+    const searchTerm = document.getElementById('search-bar').value.toLowerCase();
+    const sortBy = document.getElementById('sort-dropdown').value;
+    const filterBy = document.getElementById('filter-dropdown').value;
 
-  // Filter
-  const filter = filterDropdown.value;
-  if (filter === 'completed') {
-    filteredTasks = filteredTasks.filter((task) => task.completed);
-  } else if (filter === 'incomplete') {
-    filteredTasks = filteredTasks.filter((task) => !task.completed);
-  }
+    let filteredTasks = tasks.filter((task) => {
+        return task.title.toLowerCase().includes(searchTerm);
+    });
 
-  // Sort
-  const sortBy = sortDropdown.value;
-  filteredTasks.sort((a, b) => {
-    if (sortBy === 'title') {
-      return a.title.localeCompare(b.title);
-    } else if (sortBy === 'date') {
-      return new Date(a.date) - new Date(b.date);
+    if (filterBy === 'completed') {
+        filteredTasks = filteredTasks.filter(task => task.completed);
+    } else if (filterBy === 'incomplete') {
+        filteredTasks = filteredTasks.filter(task => !task.completed);
     }
-    return 0;
-  });
 
-  // Render tasks
-  tasksList.innerHTML = '';
-  filteredTasks.forEach((task) => {
-    const li = document.createElement('li');
-    li.className = 'list-group-item d-flex justify-content-between align-items-center';
-    li.innerHTML = `
-      <div>
-        <h5>${task.title}</h5>
-        <small>Due: ${task.date}</small>
-        <p>${task.desc}</p>
-      </div>
-      <div>
-        <button class="btn btn-sm btn-primary" onclick="showEditTaskModal(${task.id})">Edit</button>
-        <button class="btn btn-sm btn-success" onclick="toggleTaskCompletion(${task.id})">
-          ${task.completed ? 'Mark Incomplete' : 'Mark Completed'}
-        </button>
-        <button class="btn btn-sm btn-danger" onclick="deleteTask(${task.id})">Delete</button>
-      </div>
-    `;
-    tasksList.appendChild(li);
-  });
+    if (sortBy === 'title') {
+        filteredTasks.sort((a, b) => a.title.localeCompare(b.title));
+    } else if (sortBy === 'date') {
+        filteredTasks.sort((a, b) => new Date(a.date) - new Date(b.date));
+    }
+
+    filteredTasks.forEach((task) => {
+        const listItem = document.createElement('li');
+        listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+
+        listItem.innerHTML = `
+            <div>
+                <strong>${task.title}</strong>
+                <p>${task.desc} <small>${task.date}</small></p>
+            </div>
+            <div>
+                <button class="btn btn-info btn-sm" onclick="editTask(${task.id})">Edit</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteTask(${task.id})">Delete</button>
+                <button class="btn btn-${task.completed ? 'warning' : 'success'} btn-sm" onclick="toggleTaskCompletion(${task.id})">
+                    ${task.completed ? 'Undo' : 'Complete'}
+                </button>
+            </div>
+        `;
+
+        tasksContainer.appendChild(listItem);
+    });
 }
 
-// Fetch tasks from task.json
-async function fetchTasks() {
-  try {
-    const response = await fetch('tasks.json');
-    if (!response.ok) throw new Error('Failed to load task.json');
-    tasks = await response.json();
-    renderTasks();
-  } catch (error) {
-    console.error('Error fetching tasks:', error);
-  }
-}
+// Add new task
+document.getElementById('task-form').addEventListener('submit', function (event) {
+    event.preventDefault();
 
-// Add a new task
-taskForm.addEventListener('submit', (e) => {
-  e.preventDefault();
+    const title = document.getElementById('task-title').value;
+    const desc = document.getElementById('task-desc').value;
+    const date = document.getElementById('task-date').value;
 
-  const title = document.getElementById('task-title').value.trim();
-  const desc = document.getElementById('task-desc').value.trim();
-  const date = document.getElementById('task-date').value;
+    const newTask = {
+        id: tasks.length + 1, // Simple ID generation
+        title,
+        desc,
+        date,
+        completed: false
+    };
 
-  if (title && desc && date) {
-    const newTask = { id: Date.now(), title, desc, date, completed: false };
     tasks.push(newTask);
     renderTasks();
-    taskForm.reset();
-  }
+
+    // Clear input fields
+    document.getElementById('task-title').value = '';
+    document.getElementById('task-desc').value = '';
+    document.getElementById('task-date').value = '';
 });
 
-// Show the edit task modal
-function showEditTaskModal(taskId) {
-  const task = tasks.find((task) => task.id === taskId);
-  if (task) {
-    editingTaskId = taskId;
-    document.getElementById('edit-task-title').value = task.title;
-    document.getElementById('edit-task-desc').value = task.desc;
-    document.getElementById('edit-task-date').value = task.date;
-    editTaskModal.show();
-  }
+// Edit a task
+function editTask(taskId) {
+    const task = tasks.find(t => t.id === taskId);
+    if (task) {
+        document.getElementById('task-title').value = task.title;
+        document.getElementById('task-desc').value = task.desc;
+        document.getElementById('task-date').value = task.date;
+        editingTaskId = taskId;
+    }
 }
 
-// Edit a task
-editTaskForm.addEventListener('submit', (e) => {
-  e.preventDefault();
+// Update the task
+document.getElementById('task-form').addEventListener('submit', function (event) {
+    event.preventDefault();
+    
+    const updatedTitle = document.getElementById('task-title').value;
+    const updatedDesc = document.getElementById('task-desc').value;
+    const updatedDate = document.getElementById('task-date').value;
 
-  const updatedTitle = document.getElementById('edit-task-title').value.trim();
-  const updatedDesc = document.getElementById('edit-task-desc').value.trim();
-  const updatedDate = document.getElementById('edit-task-date').value;
+    if (editingTaskId) {
+        const task = tasks.find(t => t.id === editingTaskId);
+        if (task) {
+            task.title = updatedTitle;
+            task.desc = updatedDesc;
+            task.date = updatedDate;
+            renderTasks();
+            editingTaskId = null;
 
-  if (updatedTitle && updatedDesc && updatedDate) {
-    const task = tasks.find((task) => task.id === editingTaskId);
-    if (task) {
-      task.title = updatedTitle;
-      task.desc = updatedDesc;
-      task.date = updatedDate;
-      renderTasks();
-      editTaskModal.hide();
+            // Clear input fields
+            document.getElementById('task-title').value = '';
+            document.getElementById('task-desc').value = '';
+            document.getElementById('task-date').value = '';
+        }
     }
-  }
 });
 
 // Delete a task
 function deleteTask(taskId) {
-  tasks = tasks.filter((task) => task.id !== taskId);
-  renderTasks();
+    tasks = tasks.filter(task => task.id !== taskId);
+    renderTasks();
 }
 
 // Toggle task completion
 function toggleTaskCompletion(taskId) {
-  const task = tasks.find((task) => task.id === taskId);
-  if (task) {
-    task.completed = !task.completed;
-    renderTasks();
-  }
+    const task = tasks.find(t => t.id === taskId);
+    if (task) {
+        task.completed = !task.completed;
+        renderTasks();
+    }
 }
 
-// Search, Sort, and Filter Events
-searchBar.addEventListener('input', renderTasks);
-sortDropdown.addEventListener('change', renderTasks);
-filterDropdown.addEventListener('change', renderTasks);
+// Event listeners for search, sort, and filter
+document.getElementById('search-bar').addEventListener('input', renderTasks);
+document.getElementById('sort-dropdown').addEventListener('change', renderTasks);
+document.getElementById('filter-dropdown').addEventListener('change', renderTasks);
 
-// Initial fetch
+// Initial fetch of tasks
 fetchTasks();

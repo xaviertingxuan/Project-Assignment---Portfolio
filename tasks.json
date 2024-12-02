@@ -12,5 +12,13 @@
     "desc": "Write a blog post on vanilla JavaScript CRUD apps",
     "date": "2024-12-05",
     "completed": true
+  },
+  {
+    "id": 3,
+    "title": "Hello",
+    "desc": "Write a",
+    "date": "2024-12-08",
+    "completed": true
   }
+  
 ]

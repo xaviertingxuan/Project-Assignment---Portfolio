@@ -1,49 +1,10 @@
-/* Custom styles for the Task Manager */
 body {
-  background-color: #f8f9fa;
-  color: #212529;
   padding: 20px;
 }
 
-header {
-  margin-bottom: 2rem;
+.card {
+  margin-bottom: 20px;
 }
-
-h1 {
-  background-color: green;
-  color: #f8f9fa;
-}
-
-.card-title {
-  margin-bottom: 1.5rem;
-}
-
-.list-group-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.list-group-item div:first-child {
-  flex: 1;
-}
-
-.list-group-item button {
-  margin-left: 0.5rem;
-}
-
-@media (max-width: 768px) {
-  .list-group-item {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .list-group-item button {
-    margin-left: 0;
-    margin-top: 0.5rem;
-  }
-}
-
 
 #tasks {
   max-height: 400px;
