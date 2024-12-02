@@ -12,3 +12,13 @@ h1 {
   color: white;
   background-color: green;
 }
+
+#photo-results img {
+  max-width: 100px;
+  height: auto;
+  transition: transform 0.2s ease;
+}
+
+#photo-results img:hover {
+  transform: scale(1.1);
+}
