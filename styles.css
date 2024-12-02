@@ -10,3 +10,12 @@ body {
   max-height: 400px;
   overflow-y: auto;
 }
+.btn-group {
+  margin-left: auto; /* This pushes the button group to the right */
+}
+
+.list-group-item {
+  display: flex; /* Ensure the item is a flex container */
+  justify-content: space-between; /* Space items evenly */
+  align-items: center; /* Center items vertically */
+}

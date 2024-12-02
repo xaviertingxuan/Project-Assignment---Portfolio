@@ -49,11 +49,11 @@ function renderTasks() {
         listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
 
         listItem.innerHTML = `
-            <div>
+            <div class="w-100">
                 <strong>${task.title}</strong>
                 <p>${task.desc} <small>${task.date}</small></p>
             </div>
-            <div>
+            <div class="btn-group">
                 <button class="btn btn-info btn-sm" onclick="editTask(${task.id})">Edit</button>
                 <button class="btn btn-danger btn-sm" onclick="deleteTask(${task.id})">Delete</button>
                 <button class="btn btn-${task.completed ? 'warning' : 'success'} btn-sm" onclick="toggleTaskCompletion(${task.id})">
