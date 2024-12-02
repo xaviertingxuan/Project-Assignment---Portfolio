@@ -19,6 +19,18 @@ function fetchTasks() {
         });
 }
 
+// // Fetch tasks from task.json
+// async function fetchTasks() {
+//     try {
+//       const response = await fetch('tasks.json');
+//       if (!response.ok) throw new Error('Failed to load task.json');
+//       tasks = await response.json();
+//       renderTasks();
+//     } catch (error) {
+//       console.error('Error fetching tasks:', error);
+//     }
+//   }
+
 // Render tasks to the UI
 function renderTasks() {
     const tasksContainer = document.getElementById('tasks');
