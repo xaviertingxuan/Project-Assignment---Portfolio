@@ -19,3 +19,8 @@ body {
   justify-content: space-between; /* Space items evenly */
   align-items: center; /* Center items vertically */
 }
+
+h1 {
+  color: white;
+  background-color: green;
+}
