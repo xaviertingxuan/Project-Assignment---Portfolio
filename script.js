@@ -50,10 +50,13 @@ function renderTasks() {
         filteredTasks = filteredTasks.filter(task => !task.completed);
     }
 
+    // Sort tasks based on selected option
     if (sortBy === 'title') {
         filteredTasks.sort((a, b) => a.title.localeCompare(b.title));
-    } else if (sortBy === 'date') {
+    } else if (sortBy === 'date-asc') {
         filteredTasks.sort((a, b) => new Date(a.date) - new Date(b.date));
+    } else if (sortBy === 'date-desc') {
+        filteredTasks.sort((a, b) => new Date(b.date) - new Date(a.date));
     }
 
     filteredTasks.forEach((task) => {
