@@ -1,23 +1,35 @@
 body {
-  padding: 20px;
+  background-color: #f8f9fa; /* Light background color */
+  color: #343a40; /* Dark text color */
 }
 
 .card {
-  margin-bottom: 20px;
+  border: 1px solid #ced4da; /* Light border color */
 }
 
-#tasks {
-  max-height: 400px;
-  overflow-y: auto;
+.card-header {
+  background-color: #007bff; /* Bootstrap primary color */
+  color: white; /* White text for header */
 }
+
 .btn-group {
-  margin-left: auto; /* This pushes the button group to the right */
+  margin-left: auto; /* Align buttons to the right */
 }
 
 .list-group-item {
-  display: flex; /* Ensure the item is a flex container */
-  justify-content: space-between; /* Space items evenly */
+  display: flex; /* Flexbox for item alignment */
+  justify-content: space-between; /* Space between title/description and buttons */
   align-items: center; /* Center items vertically */
+}
+
+.list-group-item strong {
+  color: #007bff; /* Color for task titles */
+}
+
+.list-group-item p {
+  margin: 0; /* Remove default margin */
+  font-size: 0.9rem; /* Smaller font size for description */
+  color: #6c757d; /* Bootstrap secondary color for description */
 }
 
 h1 {
