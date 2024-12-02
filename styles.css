@@ -1,35 +1,11 @@
-body {
-  background-color: #f8f9fa; /* Light background color */
-  color: #343a40; /* Dark text color */
+.task-info {
+  flex-grow: 1; /* Allow this div to take up available space */
 }
 
-.card {
-  border: 1px solid #ced4da; /* Light border color */
-}
-
-.card-header {
-  background-color: #007bff; /* Bootstrap primary color */
-  color: white; /* White text for header */
-}
-
-.btn-group {
-  margin-left: auto; /* Align buttons to the right */
-}
-
-.list-group-item {
-  display: flex; /* Flexbox for item alignment */
-  justify-content: space-between; /* Space between title/description and buttons */
-  align-items: center; /* Center items vertically */
-}
-
-.list-group-item strong {
-  color: #007bff; /* Color for task titles */
-}
-
-.list-group-item p {
-  margin: 0; /* Remove default margin */
-  font-size: 0.9rem; /* Smaller font size for description */
-  color: #6c757d; /* Bootstrap secondary color for description */
+.button-container {
+  display: flex; /* Align buttons in a row */
+  gap: 5px; /* Add space between buttons */
+  margin-top: 10px; /* Space between task details and buttons */
 }
 
 h1 {
