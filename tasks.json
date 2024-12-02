@@ -1,4 +1,16 @@
 [
-    { "id": 1, "title": "Learn JavaScript", "desc": "Work through tutorials", "date": "2024-11-30" },
-    { "id": 2, "title": "Complete Portfolio Project", "desc": "Build CRUD app", "date": "2024-12-05" }
-  ]
+  {
+    "id": 1,
+    "title": "Learn JavaScript",
+    "desc": "Complete the JavaScript tutorial",
+    "date": "2024-11-30",
+    "completed": false
+  },
+  {
+    "id": 2,
+    "title": "Write Blog Post",
+    "desc": "Write a blog post on vanilla JavaScript CRUD apps",
+    "date": "2024-12-05",
+    "completed": true
+  }
+]
