@@ -22,3 +22,15 @@ h1 {
 #photo-results img:hover {
   transform: scale(1.1);
 }
+
+.news-container {
+  margin-top: 20px;
+}
+
+.quote-container {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+}
