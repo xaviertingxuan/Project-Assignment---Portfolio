@@ -1,35 +1,35 @@
 let tasks = [];
 let editingTaskId = null;
 
-// Fetch tasks from task.json using a GET request
-function fetchTasks() {
-    fetch('tasks.json')
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then((data) => {
-            tasks = data;
-            renderTasks();
-        })
-        .catch((error) => {
-            console.error('There was a problem with the fetch operation:', error);
-        });
-}
+// // Fetch tasks from task.json using a GET request
+// function fetchTasks() {
+//     fetch('tasks.json')
+//         .then((response) => {
+//             if (!response.ok) {
+//                 throw new Error('Network response was not ok');
+//             }
+//             return response.json();
+//         })
+//         .then((data) => {
+//             tasks = data;
+//             renderTasks();
+//         })
+//         .catch((error) => {
+//             console.error('There was a problem with the fetch operation:', error);
+//         });
+// }
 
-// // Fetch tasks from task.json
-// async function fetchTasks() {
-//     try {
-//       const response = await fetch('tasks.json');
-//       if (!response.ok) throw new Error('Failed to load task.json');
-//       tasks = await response.json();
-//       renderTasks();
-//     } catch (error) {
-//       console.error('Error fetching tasks:', error);
-//     }
-//   }
+// Fetch tasks from task.json
+async function fetchTasks() {
+    try {
+      const response = await fetch('tasks.json');
+      if (!response.ok) throw new Error('Failed to load task.json');
+      tasks = await response.json();
+      renderTasks();
+    } catch (error) {
+      console.error('Error fetching tasks:', error);
+    }
+  }
 
 // Render tasks to the UI
 function renderTasks() {
