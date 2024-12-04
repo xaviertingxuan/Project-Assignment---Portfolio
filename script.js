@@ -1,183 +1,5 @@
-// let tasks = [];
-// let editingTaskId = null;
-
-// // Fetch tasks from task.json using a GET request
-// function fetchTasks() {
-//     fetch('tasks.json')
-//         .then((response) => {
-//             if (!response.ok) {
-//                 throw new Error('Network response was not ok');
-//             }
-//             return response.json();
-//         })
-//         .then((data) => {
-//             tasks = data;
-//             renderTasks();
-//         })
-//         .catch((error) => {
-//             console.error('There was a problem with the fetch operation:', error);
-//         });
-// }
-
-// // // Fetch tasks from task.json
-// // async function fetchTasks() {
-// //     try {
-// //       const response = await fetch('tasks.json');
-// //       if (!response.ok) throw new Error('Failed to load task.json');
-// //       tasks = await response.json();
-// //       renderTasks();
-// //     } catch (error) {
-// //       console.error('Error fetching tasks:', error);
-// //     }
-// //   }
-
-// // Render tasks to the UI
-// function renderTasks() {
-//     const tasksContainer = document.getElementById('tasks');
-//     tasksContainer.innerHTML = '';
-
-//     const searchTerm = document.getElementById('search-bar').value.toLowerCase();
-//     const sortBy = document.getElementById('sort-dropdown').value;
-//     const filterBy = document.getElementById('filter-dropdown').value;
-
-//     let filteredTasks = tasks.filter((task) => {
-//         return task.title.toLowerCase().includes(searchTerm);
-//     });
-
-//     if (filterBy === 'completed') {
-//         filteredTasks = filteredTasks.filter(task => task.completed);
-//     } else if (filterBy === 'incomplete') {
-//         filteredTasks = filteredTasks.filter(task => !task.completed);
-//     }
-
-//     // Sort tasks based on selected option
-//     if (sortBy === 'title') {
-//         filteredTasks.sort((a, b) => a.title.localeCompare(b.title));
-//     } else if (sortBy === 'date-asc') {
-//         filteredTasks.sort((a, b) => new Date(a.date) - new Date(b.date));
-//     } else if (sortBy === 'date-desc') {
-//         filteredTasks.sort((a, b) => new Date(b.date) - new Date(a.date));
-//     }
-
-//     filteredTasks.forEach((task) => {
-//         const listItem = document.createElement('li');
-//         listItem.className = 'list-group-item d-flex justify-content-between align-items-start';
-
-//         // Task information
-//         listItem.innerHTML = `
-//             <div class="task-info">
-//                 <strong>${task.title}</strong>
-//                 <p>${task.desc} <small>${task.date}</small></p>
-//             </div>
-//             <div class="button-container">
-//                 <button class="btn btn-info btn-sm" onclick="editTask(${task.id})">Edit</button>
-//                 <button class="btn btn-danger btn-sm" onclick="deleteTask(${task.id})">Delete</button>
-//                 <button class="btn btn-${task.completed ? 'warning' : 'success'} btn-sm" onclick="toggleTaskCompletion(${task.id})">
-//                     ${task.completed ? 'Undo' : 'Complete'}
-//                 </button>
-//             </div>
-//         `;
-
-//         tasksContainer.appendChild(listItem);
-//     });
-// }
-
-// // Add new task
-// document.getElementById('task-form').addEventListener('submit', function (event) {
-//     event.preventDefault();
-
-//     const title = document.getElementById('task-title').value;
-//     const desc = document.getElementById('task-desc').value;
-//     const date = document.getElementById('task-date').value;
-
-//     const newTask = {
-//         id: tasks.length + 1, // Simple ID generation
-//         title,
-//         desc,
-//         date,
-//         completed: false
-//     };
-
-//     tasks.push(newTask);
-//     renderTasks();
-
-//     // Clear input fields
-//     document.getElementById('task-title').value = '';
-//     document.getElementById('task-desc').value = '';
-//     document.getElementById('task-date').value = '';
-// });
-
-
-// // Edit a task
-// function editTask(taskId) {
-//     const task = tasks.find(t => t.id === taskId);
-//     if (task) {
-//         document.getElementById('task-title').value = task.title;
-//         document.getElementById('task-desc').value = task.desc;
-//         document.getElementById('task-date').value = task.date;
-//         editingTaskId = taskId;
-//     }
-// }
-
-// // Update the task
-// document.getElementById('task-form').addEventListener('submit', function (event) {
-//     event.preventDefault();
-    
-//     const updatedTitle = document.getElementById('task-title').value;
-//     const updatedDesc = document.getElementById('task-desc').value;
-//     const updatedDate = document.getElementById('task-date').value;
-
-//     if (editingTaskId) {
-//         const task = tasks.find(t => t.id === editingTaskId);
-//         if (task) {
-//             task.title = updatedTitle;
-//             task.desc = updatedDesc;
-//             task.date = updatedDate;
-//             renderTasks();
-//             editingTaskId = null;
-
-//             // Clear input fields
-//             document.getElementById('task-title').value = '';
-//             document.getElementById('task-desc').value = '';
-//             document.getElementById('task-date').value = '';
-//         }
-//     }
-// });
-
-// // Delete a task
-// function deleteTask(taskId) {
-//     tasks = tasks.filter(task => task.id !== taskId);
-//     renderTasks();
-// }
-
-// // Toggle task completion
-// function toggleTaskCompletion(taskId) {
-//     const task = tasks.find(t => t.id === taskId);
-//     if (task) {
-//         task.completed = !task.completed;
-//         renderTasks();
-//     }
-// }
-
-// // Event listeners for search, sort, and filter
-// document.getElementById('search-bar').addEventListener('input', renderTasks);
-// document.getElementById('sort-dropdown').addEventListener('change', renderTasks);
-// document.getElementById('filter-dropdown').addEventListener('change', renderTasks);
-
-// // Initial fetch of tasks
-// fetchTasks();
-
-
-
 let tasks = [];
 let editingTaskId = null;
-let currentQuote = '';
-
-// Call the fetchRandomQuote function when the application starts
-window.onload = function() {
-    init(); // Existing initialization function
-    fetchRandomQuote(); // Fetch a quote on load
-};
 
 // Fetch tasks from task.json using a GET request
 function fetchTasks() {
@@ -197,22 +19,17 @@ function fetchTasks() {
         });
 }
 
-// Fetch a random joke from JokeAPI
-async function fetchRandomJoke() {
-    const jokeUrl = 'https://v2.jokeapi.dev/joke/Any';
-
-    try {
-        const response = await fetch(jokeUrl);
-        if (!response.ok) {
-            throw new Error('Failed to fetch joke.');
-        }
-        const jokeData = await response.json();
-        return jokeData.type === 'single' ? jokeData.joke : `${jokeData.setup} - ${jokeData.delivery}`;
-    } catch (error) {
-        console.error('Error fetching joke:', error);
-        return 'Could not fetch joke.';
-    }
-}
+// // Fetch tasks from task.json
+// async function fetchTasks() {
+//     try {
+//       const response = await fetch('tasks.json');
+//       if (!response.ok) throw new Error('Failed to load task.json');
+//       tasks = await response.json();
+//       renderTasks();
+//     } catch (error) {
+//       console.error('Error fetching tasks:', error);
+//     }
+//   }
 
 // Render tasks to the UI
 function renderTasks() {
@@ -265,8 +82,7 @@ function renderTasks() {
     });
 }
 
-
-// Add new task or update existing task
+// Add new task
 document.getElementById('task-form').addEventListener('submit', function (event) {
     event.preventDefault();
 
@@ -274,33 +90,23 @@ document.getElementById('task-form').addEventListener('submit', function (event)
     const desc = document.getElementById('task-desc').value;
     const date = document.getElementById('task-date').value;
 
-    if (editingTaskId) {
-        // Update the task
-        const task = tasks.find(t => t.id === editingTaskId);
-        if (task) {
-            task.title = title;
-            task.desc = desc;
-            task.date = date;
-            editingTaskId = null;
-        }
-    } else {
-        // Add a new task
-        const newTask = {
-            id: tasks.length + 1, // Simple ID generation
-            title,
-            desc,
-            date,
-            completed: false
-        };
-        tasks.push(newTask);
-    }
+    const newTask = {
+        id: tasks.length + 1, // Simple ID generation
+        title,
+        desc,
+        date,
+        completed: false
+    };
 
+    tasks.push(newTask);
     renderTasks();
+
     // Clear input fields
     document.getElementById('task-title').value = '';
     document.getElementById('task-desc').value = '';
     document.getElementById('task-date').value = '';
 });
+
 
 // Edit a task
 function editTask(taskId) {
@@ -312,6 +118,31 @@ function editTask(taskId) {
         editingTaskId = taskId;
     }
 }
+
+// Update the task
+document.getElementById('task-form').addEventListener('submit', function (event) {
+    event.preventDefault();
+    
+    const updatedTitle = document.getElementById('task-title').value;
+    const updatedDesc = document.getElementById('task-desc').value;
+    const updatedDate = document.getElementById('task-date').value;
+
+    if (editingTaskId) {
+        const task = tasks.find(t => t.id === editingTaskId);
+        if (task) {
+            task.title = updatedTitle;
+            task.desc = updatedDesc;
+            task.date = updatedDate;
+            renderTasks();
+            editingTaskId = null;
+
+            // Clear input fields
+            document.getElementById('task-title').value = '';
+            document.getElementById('task-desc').value = '';
+            document.getElementById('task-date').value = '';
+        }
+    }
+});
 
 // Delete a task
 function deleteTask(taskId) {
@@ -327,16 +158,41 @@ function toggleTaskCompletion(taskId) {
         renderTasks();
     }
 }
-async function initializeApp() {
-    await renderTasks(); // Initial render of tasks
-    const joke = await fetchRandomJoke();
-    document.getElementById('joke').textContent = joke; // Display random joke
+
+// Fetch random joke
+function fetchRandomJoke() {
+    const url = "https://v2.jokeapi.dev/joke/Any"; // Joke API URL
+    fetch(url)
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then((jokeData) => {
+            const jokeDisplay = document.getElementById('jokeDisplay');
+            if (jokeData.type === 'single') {
+                jokeDisplay.innerText = jokeData.joke; // Display single joke
+            } else {
+                jokeDisplay.innerText = `${jokeData.setup} - ${jokeData.delivery}`; // Display setup and delivery
+            }
+        })
+        .catch((error) => {
+            console.error('There was a problem with the joke fetch operation:', error);
+            document.getElementById('jokeDisplay').innerText = 'Failed to fetch a joke.';
+        });
 }
+
+// Event listener for joke button
+document.getElementById('jokeButton').addEventListener('click', fetchRandomJoke);
 
 // Event listeners for search, sort, and filter
 document.getElementById('search-bar').addEventListener('input', renderTasks);
 document.getElementById('sort-dropdown').addEventListener('change', renderTasks);
 document.getElementById('filter-dropdown').addEventListener('change', renderTasks);
 
-// Initial fetch of tasks and a random quote
+// Initial fetch of tasks
 fetchTasks();
+fetchRandomJoke();
+
+
