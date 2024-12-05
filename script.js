@@ -1,35 +1,18 @@
+// Global tasks array and editing task ID
 let tasks = [];
 let editingTaskId = null;
-
-// // Fetch tasks from task.json using a GET request
-// function fetchTasks() {
-//     fetch('tasks.json')
-//         .then((response) => {
-//             if (!response.ok) {
-//                 throw new Error('Network response was not ok');
-//             }
-//             return response.json();
-//         })
-//         .then((data) => {
-//             tasks = data;
-//             renderTasks();
-//         })
-//         .catch((error) => {
-//             console.error('There was a problem with the fetch operation:', error);
-//         });
-// }
 
 // Fetch tasks from task.json
 async function fetchTasks() {
     try {
-      const response = await fetch('tasks.json');
-      if (!response.ok) throw new Error('Failed to load task.json');
-      tasks = await response.json();
-      renderTasks();
+        const response = await fetch('tasks.json');
+        if (!response.ok) throw new Error('Failed to load task.json');
+        tasks = await response.json();
+        renderTasks();
     } catch (error) {
-      console.error('Error fetching tasks:', error);
+        console.error('Error fetching tasks:', error);
     }
-  }
+}
 
 // Render tasks to the UI
 function renderTasks() {
@@ -40,17 +23,14 @@ function renderTasks() {
     const sortBy = document.getElementById('sort-dropdown').value;
     const filterBy = document.getElementById('filter-dropdown').value;
 
-    let filteredTasks = tasks.filter((task) => {
-        return task.title.toLowerCase().includes(searchTerm);
-    });
+    let filteredTasks = tasks.filter((task) => task.title.toLowerCase().includes(searchTerm));
 
     if (filterBy === 'completed') {
-        filteredTasks = filteredTasks.filter(task => task.completed);
+        filteredTasks = filteredTasks.filter((task) => task.completed);
     } else if (filterBy === 'incomplete') {
-        filteredTasks = filteredTasks.filter(task => !task.completed);
+        filteredTasks = filteredTasks.filter((task) => !task.completed);
     }
 
-    // Sort tasks based on selected option
     if (sortBy === 'title') {
         filteredTasks.sort((a, b) => a.title.localeCompare(b.title));
     } else if (sortBy === 'date-asc') {
@@ -63,7 +43,6 @@ function renderTasks() {
         const listItem = document.createElement('li');
         listItem.className = 'list-group-item d-flex justify-content-between align-items-start';
 
-        // Task information
         listItem.innerHTML = `
             <div class="task-info">
                 <strong>${task.title}</strong>
@@ -83,107 +62,130 @@ function renderTasks() {
 }
 
 // Add new task
-document.getElementById('task-form').addEventListener('submit', function (event) {
+function addTask(event) {
     event.preventDefault();
 
-    const title = document.getElementById('task-title').value;
-    const desc = document.getElementById('task-desc').value;
+    const title = document.getElementById('task-title').value.trim();
+    const desc = document.getElementById('task-desc').value.trim();
     const date = document.getElementById('task-date').value;
 
+    if (!title || !desc || !date) {
+        alert('Please fill in all fields!');
+        return;
+    }
+
     const newTask = {
-        id: tasks.length + 1, // Simple ID generation
+        id: tasks.length + 1,
         title,
         desc,
         date,
-        completed: false
+        completed: false,
     };
 
     tasks.push(newTask);
     renderTasks();
 
-    // Clear input fields
     document.getElementById('task-title').value = '';
     document.getElementById('task-desc').value = '';
     document.getElementById('task-date').value = '';
-});
-
+}
 
 // Edit a task
 function editTask(taskId) {
-    const task = tasks.find(t => t.id === taskId);
+    const task = tasks.find((t) => t.id === taskId);
     if (task) {
         document.getElementById('task-title').value = task.title;
         document.getElementById('task-desc').value = task.desc;
         document.getElementById('task-date').value = task.date;
         editingTaskId = taskId;
+
+        // Show popup (optional)
+        document.getElementById('task-form-title').innerText = 'Edit Task';
+        document.getElementById('task-modal').style.display = 'block';
     }
 }
 
-// Update the task
-document.getElementById('task-form').addEventListener('submit', function (event) {
+// Update a task
+function updateTask(event) {
     event.preventDefault();
-    
-    const updatedTitle = document.getElementById('task-title').value;
-    const updatedDesc = document.getElementById('task-desc').value;
+
+    const updatedTitle = document.getElementById('task-title').value.trim();
+    const updatedDesc = document.getElementById('task-desc').value.trim();
     const updatedDate = document.getElementById('task-date').value;
 
-    if (editingTaskId) {
-        const task = tasks.find(t => t.id === editingTaskId);
-        if (task) {
-            task.title = updatedTitle;
-            task.desc = updatedDesc;
-            task.date = updatedDate;
-            renderTasks();
-            editingTaskId = null;
-
-            // Clear input fields
-            document.getElementById('task-title').value = '';
-            document.getElementById('task-desc').value = '';
-            document.getElementById('task-date').value = '';
-        }
+    if (!updatedTitle || !updatedDesc || !updatedDate) {
+        alert('Please fill in all fields!');
+        return;
     }
-});
+
+    if (editingTaskId !== null) {
+        const taskIndex = tasks.findIndex((t) => t.id === editingTaskId);
+        if (taskIndex !== -1) {
+            tasks[taskIndex].title = updatedTitle;
+            tasks[taskIndex].desc = updatedDesc;
+            tasks[taskIndex].date = updatedDate;
+        }
+
+        editingTaskId = null;
+        renderTasks();
+
+        document.getElementById('task-title').value = '';
+        document.getElementById('task-desc').value = '';
+        document.getElementById('task-date').value = '';
+
+        // Hide popup (optional)
+        document.getElementById('task-form-title').innerText = 'Add Task';
+        document.getElementById('task-modal').style.display = 'none';
+    }
+}
 
 // Delete a task
 function deleteTask(taskId) {
-    tasks = tasks.filter(task => task.id !== taskId);
+    tasks = tasks.filter((task) => task.id !== taskId);
     renderTasks();
 }
 
 // Toggle task completion
 function toggleTaskCompletion(taskId) {
-    const task = tasks.find(t => t.id === taskId);
+    const task = tasks.find((t) => t.id === taskId);
     if (task) {
         task.completed = !task.completed;
         renderTasks();
     }
 }
 
+// Attach event listener for task form
+document.getElementById('task-form').addEventListener('submit', function (event) {
+    if (editingTaskId === null) {
+        addTask(event);
+    } else {
+        updateTask(event);
+    }
+});
+
 // Fetch random joke
 function fetchRandomJoke() {
-    const url = "https://v2.jokeapi.dev/joke/Any"; // Joke API URL
+    const url = 'https://v2.jokeapi.dev/joke/Any';
     fetch(url)
         .then((response) => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
+            if (!response.ok) throw new Error('Failed to fetch joke');
             return response.json();
         })
         .then((jokeData) => {
             const jokeDisplay = document.getElementById('jokeDisplay');
             if (jokeData.type === 'single') {
-                jokeDisplay.innerText = jokeData.joke; // Display single joke
+                jokeDisplay.innerText = jokeData.joke;
             } else {
-                jokeDisplay.innerText = `${jokeData.setup} - ${jokeData.delivery}`; // Display setup and delivery
+                jokeDisplay.innerText = `${jokeData.setup} - ${jokeData.delivery}`;
             }
         })
         .catch((error) => {
-            console.error('There was a problem with the joke fetch operation:', error);
+            console.error('Error fetching joke:', error);
             document.getElementById('jokeDisplay').innerText = 'Failed to fetch a joke.';
         });
 }
 
-// Event listener for joke button
+// Attach event listener for joke button
 document.getElementById('jokeButton').addEventListener('click', fetchRandomJoke);
 
 // Event listeners for search, sort, and filter
@@ -191,8 +193,6 @@ document.getElementById('search-bar').addEventListener('input', renderTasks);
 document.getElementById('sort-dropdown').addEventListener('change', renderTasks);
 document.getElementById('filter-dropdown').addEventListener('change', renderTasks);
 
-// Initial fetch of tasks
+// Initial fetch of tasks and joke
 fetchTasks();
 fetchRandomJoke();
-
-
